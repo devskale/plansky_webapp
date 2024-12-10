@@ -3,31 +3,48 @@ import { PromptConfig } from '../types';
 export const prompts: PromptConfig[] = [
   {
     id: 'standard',
-    name: 'Standard Analysis',
-    description: 'Basic room analysis with measurements',
-    prompt: `Analyze this architectural drawing and extract the following information:
-1. Project name and details (if visible)
-2. List of rooms with their:
-   - Room number
-   - Description/purpose
-   - Size in square meters
-   - Floor material (if specified)
-   - Ceiling height (if specified)
-3. Categorize rooms by their function (e.g., Medical, Storage, Staff areas)
+    name: 'Standardanalyse',
+    description: 'Grundlegende Raumanalyse mit Maßangaben v0.1',
+    prompt: `Analysiere diesen 2D Raumplan und extrahiere die folgenden Informationen:
 
-Format the response as a structured JSON object with the following structure:
+1. Projektname, Architekt und Datum:
+   - Falls KEIN Projektname sichtbar ist, generiere einen passenden Namen basierend auf den erkennbaren Planungselementen.
+   - Beispiele für generierte Namen:
+     * Bei Wohnräumen: "Wohnungsgrundriss"
+     * Bei Büroräumen: "Bürofläche"
+     * Bei medizinischen Räumen: "Praxis"
+     * Bei gemischter Nutzung: "Mehrzweckgebäude"
+     * Raumplan
+
+2. Liste aller Räume mit:
+   - Raumnummer (fortlaufend, beginnend bei 001)
+   - Beschreibung/Verwendungszweck
+   - Größe in Quadratmetern
+   - Bodenbelag (falls angegeben)
+   - Raumhöhe (falls angegeben)
+
+3. Kategorisiere die Räume nach ihrer Funktion:
+   - Wohnbereich (Wohnen, Schlafen, Küche)
+   - Sanitär (Bad, WC)
+   - Verkehr (Flur, Treppenhaus)
+   - Technik (Heizung, Lager)
+   - Büro (Arbeiten, Besprechung)
+   - Medizinisch (Behandlung, Wartezimmer)
+   - Aussenbereich (Terrasse, Balkon)
+
+Formatiere die Antwort als strukturiertes JSON-Objekt mit folgender Struktur:
 {
-  "projectName": "string",
-  "architect": "string",
-  "date": "string",
+  "projectName": "string", // MUSS gefüllt sein, entweder mit sichtbarem oder generiertem Namen
+  "architect": "string",   // Name des Architekten oder "Unbekannt"
+  "date": "string",       // Datum im Format TT.MM.JJJJ
   "rooms": [
     {
-      "number": "string",
-      "description": "string",
-      "category": "string",
-      "size": number,
-      "floorMaterial": "string",
-      "ceilingHeight": number
+      "number": "string",         // Fortlaufende Nummer (001, 002, ...)
+      "description": "string",    // Raumbeschreibung
+      "category": "string",       // Kategorie aus der obigen Liste
+      "size": number,            // Größe in m²
+      "floorMaterial": "string", // Bodenbelag oder "Nicht angegeben"
+      "ceilingHeight": number    // Raumhöhe in m oder 0 wenn nicht angegeben
     }
   ]
 }`

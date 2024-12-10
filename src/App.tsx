@@ -1,8 +1,10 @@
+// App.tsx
 import React, { useState } from 'react';
 import { FileUpload } from './components/FileUpload';
 import { ProjectReport } from './components/ProjectReport';
 import { ProcessingStatus } from './components/ProcessingStatus';
 import { Header } from './components/Header';
+import { Footer } from './components/Footer';
 import { PromptSelector } from './components/PromptSelector';
 import { Project, AnalysisSettings } from './types';
 import { processFile } from './services/fileProcessor';
@@ -14,15 +16,40 @@ export function App() {
   const [settings, setSettings] = useState<AnalysisSettings>({
     selectedPromptId: 'standard'
   });
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
 
   const handleFileUpload = async (files: File[]) => {
     if (files.length === 0) return;
+    
+    const file = files[0];
+    setSelectedFile(file);
+    setError(null);
+    
+    try {
+      // Generate preview
+      if (file.type === 'application/pdf') {
+        const previewData = await extractImageFromPDF(file);
+        setPreviewUrl(previewData);
+      } else {
+        const url = URL.createObjectURL(file);
+        setPreviewUrl(url);
+      }
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to generate preview');
+      setSelectedFile(null);
+      setPreviewUrl(null);
+    }
+  };
+
+  const handleProcess = async () => {
+    if (!selectedFile) return;
 
     setIsProcessing(true);
     setError(null);
 
     try {
-      const result = await processFile(files[0], settings);
+      const result = await processFile(selectedFile, settings);
       setProject(result);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'An error occurred while processing the file');
@@ -40,8 +67,30 @@ export function App() {
           <div className="bg-white rounded-lg shadow p-6">
             <h2 className="text-lg font-semibold mb-4">Analysis Settings</h2>
             <PromptSelector settings={settings} onSettingsChange={setSettings} />
+            
             <h2 className="text-lg font-semibold mb-4">Upload Plans</h2>
             <FileUpload onFileUpload={handleFileUpload} />
+            
+            {previewUrl && (
+              <div className="mt-6">
+                <h3 className="text-md font-medium mb-2">Preview</h3>
+                <div className="relative">
+                  <img 
+                    src={previewUrl} 
+                    alt="Plan preview" 
+                    className="max-h-96 max-w-full object-contain rounded border border-gray-200"
+                  />
+                  <button
+                    onClick={handleProcess}
+                    disabled={isProcessing}
+                    className="mt-4 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 disabled:bg-gray-400 disabled:cursor-not-allowed"
+                  >
+                    {isProcessing ? 'Processing...' : 'Process Plan'}
+                  </button>
+                </div>
+              </div>
+            )}
+            
             <ProcessingStatus isProcessing={isProcessing} error={error} />
           </div>
 
@@ -49,6 +98,8 @@ export function App() {
             <ProjectReport project={project} />
           )}
         </div>
+        <Footer />
+
       </main>
     </div>
   );
