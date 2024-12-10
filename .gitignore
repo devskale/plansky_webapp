@@ -25,3 +25,4 @@ dist-ssr
 .aider*
 .env
 *.ts.[0-9]
+*.tsx.[0-9]
