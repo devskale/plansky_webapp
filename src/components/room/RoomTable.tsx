@@ -1,3 +1,4 @@
+// components/room/RoomTable.tsx
 import React from 'react';
 import { Room } from '../../types';
 
