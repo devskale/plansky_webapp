@@ -51,8 +51,8 @@ Formatiere die Antwort als strukturiertes JSON-Objekt mit folgender Struktur:
   },
   {
     id: 'detailed',
-    name: 'Detailed',
-    description: 'Comprehensive analysis including materials and connections',
+    name: 'Detailliert',
+    description: 'Umfassende Analyse mit technischen Details',
     prompt: `Perform a detailed analysis of this architectural drawing and extract:
 1. Project Information:
    - Project name and type
@@ -97,8 +97,8 @@ Format as JSON:
   },
   {
     id: 'simple',
-    name: 'Simple',
-    description: 'Basic room list with sizes',
+    name: 'Einfach',
+    description: 'Einfache Raumliste mit Fläche',
     prompt: `Create a simple room list from this architectural drawing:
 1. Extract:
    - Project name
