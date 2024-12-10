@@ -12,11 +12,11 @@ export function RoomTable({ rooms }: RoomTableProps) {
       <table className="min-w-full">
         <thead>
           <tr className="text-left text-gray-500 text-sm">
-            <th className="pb-2">Number</th>
-            <th className="pb-2">Description</th>
-            <th className="pb-2 text-right">Size (m²)</th>
-            <th className="pb-2">Floor Material</th>
-            <th className="pb-2 text-right">Height (m)</th>
+            <th className="pb-2">Nr</th>
+            <th className="pb-2">Beschreibung</th>
+            <th className="pb-2 text-right">Fläche (m²)</th>
+            <th className="pb-2">Material</th>
+            <th className="pb-2 text-right">Raumhöhe (m)</th>
           </tr>
         </thead>
         <tbody>

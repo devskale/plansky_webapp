@@ -55,14 +55,14 @@ export function FileUpload({ onFileUpload }: FileUploadProps) {
         ) : (
           <>
             <p className="text-lg font-medium">
-              Drag & drop your CAD plans here
+              CAD Plan per Drag & Drop hochladen
             </p>
-            <p className="text-sm mt-2">or click to select files</p>
+            <p className="text-sm mt-2">oder klicken um File auszuwählen</p>
           </>
         )}
         
         <p className="text-xs mt-2 text-gray-500">
-          Supports PDF and image files (PNG, JPG) up to 10MB
+          PDF und Bild Dateien (PNG, JPG) bis zu 10MB
         </p>
       </div>
     </div>

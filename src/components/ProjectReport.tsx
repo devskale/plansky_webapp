@@ -16,12 +16,12 @@ export function ProjectReport({ project }: ProjectReportProps) {
   const copyToClipboard = async () => {
     // Erstelle formatierte Projektinformationen
     const projectInfo = [
-      `Project: ${project.title}`,
-      `Architect: ${project.architect}`,
-      `Date: ${project.date}`,
-      `Total Rooms: ${project.rooms.length}`,
+      `Projekt: ${project.title}`,
+      `Architekt: ${project.architect}`,
+      `Datum: ${project.date}`,
+      `Anzahl Räume: ${project.rooms.length}`,
       '',  // Leerzeile für bessere Lesbarkeit
-      'Number\tDescription\tSize (m²)\tFloor Material\tHeight (m)'  // Header
+      'Nr\tBeschreibung\tGröße (m²)\tMaterial\tRaumhöhe (m)'  // Header
     ].join('\n');
 
     // Formatiere Raumdaten
@@ -37,7 +37,7 @@ export function ProjectReport({ project }: ProjectReportProps) {
       setCopied(true);
       setTimeout(() => setCopied(false), 2000);
     } catch (err) {
-      console.error('Failed to copy:', err);
+      console.error('Fehler beim Kopieren:', err);
     }
   };
 
