@@ -1,4 +1,31 @@
-import { PDFDocument } from 'pdf-lib';
+// utils/file.ts
+
+// Korrekte ESM Import Pfade
+const PDFJS_CDN = 'https://cdn.jsdelivr.net/npm/pdfjs-dist@4.9.155/build/pdf.mjs';
+const WORKER_CDN = 'https://cdn.jsdelivr.net/npm/pdfjs-dist@4.9.155/build/pdf.worker.mjs';
+
+let pdfjsLib: any = null;
+let initializationPromise: Promise<any> | null = null;
+
+async function initPdfJs() {
+  if (!initializationPromise) {
+    initializationPromise = (async () => {
+      try {
+        // Import das richtige ESM Modul
+        const module = await import(/* @vite-ignore */ PDFJS_CDN);
+        pdfjsLib = module;
+        // Worker-Pfad setzen
+        pdfjsLib.GlobalWorkerOptions.workerSrc = WORKER_CDN;
+        return pdfjsLib;
+      } catch (error) {
+        console.error('Failed to initialize PDF.js:', error);
+        initializationPromise = null;
+        throw error;
+      }
+    })();
+  }
+  return initializationPromise;
+}
 
 export async function fileToBase64(file: File): Promise<string> {
   return new Promise((resolve, reject) => {
@@ -11,51 +38,37 @@ export async function fileToBase64(file: File): Promise<string> {
 
 export async function extractImageFromPDF(file: File): Promise<string> {
   try {
+    const pdfjs = await initPdfJs();
     const arrayBuffer = await file.arrayBuffer();
-    const pdfDoc = await PDFDocument.load(arrayBuffer);
-    const pages = pdfDoc.getPages();
-    
-    if (pages.length === 0) {
-      throw new Error('PDF is empty');
-    }
+    const pdf = await pdfjs.getDocument({
+      data: arrayBuffer,
+      useWorkerFetch: true,
+      isEvalSupported: true,
+      useSystemFonts: true,
+    }).promise;
 
-    // Create a temporary canvas to render the PDF page
-    const page = pages[0];
-    const { width, height } = page.getSize();
-    
-    // Scale the canvas for better resolution
-    const scale = 2;
+    const page = await pdf.getPage(1);
+    const viewport = page.getViewport({ scale: 1.5 });
+
     const canvas = document.createElement('canvas');
-    const ctx = canvas.getContext('2d');
-    
-    if (!ctx) {
-      throw new Error('Could not create canvas context');
-    }
+    const context = canvas.getContext('2d');
+    if (!context) throw new Error('Could not create canvas context');
 
-    canvas.width = width * scale;
-    canvas.height = height * scale;
-    
-    // Set white background
-    ctx.fillStyle = 'white';
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
-    
-    // Convert PDF page to image
-    const viewport = {
-      width: width * scale,
-      height: height * scale
-    };
+    canvas.width = viewport.width;
+    canvas.height = viewport.height;
 
-    // Return the base64 image data
+    await page.render({
+      canvasContext: context,
+      viewport: viewport,
+    }).promise;
+
     const imageData = canvas.toDataURL('image/png');
-    if (!imageData || imageData === 'data:,') {
-      throw new Error('Failed to generate image from PDF');
-    }
+    canvas.remove();
+    await pdf.destroy();
 
     return imageData;
   } catch (error) {
-    if (error instanceof Error) {
-      throw new Error(`PDF processing failed: ${error.message}`);
-    }
-    throw new Error('Failed to process PDF file');
+    console.error('PDF preview generation error:', error);
+    throw error instanceof Error ? error : new Error('Failed to generate PDF preview');
   }
 }

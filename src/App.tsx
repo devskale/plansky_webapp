@@ -8,6 +8,7 @@ import { Footer } from './components/Footer';
 import { PromptSelector } from './components/PromptSelector';
 import { Project, AnalysisSettings } from './types';
 import { processFile } from './services/fileProcessor';
+import { extractImageFromPDF } from './utils/file';
 
 export function App() {
   const [project, setProject] = useState<Project | null>(null);
@@ -27,7 +28,6 @@ export function App() {
     setError(null);
     
     try {
-      // Generate preview
       if (file.type === 'application/pdf') {
         const previewData = await extractImageFromPDF(file);
         setPreviewUrl(previewData);
@@ -57,6 +57,15 @@ export function App() {
       setIsProcessing(false);
     }
   };
+
+  React.useEffect(() => {
+    // Cleanup URLs when component unmounts or when new file is uploaded
+    return () => {
+      if (previewUrl && !previewUrl.startsWith('data:')) {
+        URL.revokeObjectURL(previewUrl);
+      }
+    };
+  }, [previewUrl]);
 
   return (
     <div className="min-h-screen bg-gray-100">
@@ -98,9 +107,9 @@ export function App() {
             <ProjectReport project={project} />
           )}
         </div>
-        <Footer />
-
       </main>
+      
+      <Footer />
     </div>
   );
 }

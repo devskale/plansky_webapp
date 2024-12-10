@@ -1,7 +1,8 @@
-import { fileToBase64, extractImageFromPDF } from '../utils/file';
+import { fileToBase64 } from '../utils/file';
 import { transformAnalysisToProject } from '../utils/transform';
 import { analyzeDrawing } from './gemini';
 import { Project, AnalysisSettings } from '../types';
+
 
 export async function processFile(file: File, settings: AnalysisSettings): Promise<Project> {
   try {
@@ -22,11 +23,9 @@ export async function processFile(file: File, settings: AnalysisSettings): Promi
       throw new Error('File size exceeds 10MB limit');
     }
 
-    let imageData: string;
+    let fileData: string;
     try {
-      imageData = file.type === 'application/pdf' 
-        ? await extractImageFromPDF(file)
-        : await fileToBase64(file);
+      fileData = await fileToBase64(file);
     } catch (error) {
       console.error('File processing error:', error);
       throw new Error(
@@ -36,17 +35,16 @@ export async function processFile(file: File, settings: AnalysisSettings): Promi
       );
     }
 
-    if (!imageData || imageData === 'data:,') {
-      throw new Error('Failed to extract image data from file');
+    if (!fileData || fileData === 'data:,') {
+      throw new Error('Failed to extract data from file');
     }
 
     try {
-      const analysisResult = await analyzeDrawing(imageData, settings);
+      const analysisResult = await analyzeDrawing(fileData, file.type, settings);
       if (!analysisResult) {
         throw new Error('Analysis returned no results');
       }
       
-      // Validate analysis result structure
       if (!analysisResult.rooms || !Array.isArray(analysisResult.rooms)) {
         throw new Error('Invalid analysis result format: missing or invalid rooms data');
       }
@@ -60,7 +58,7 @@ export async function processFile(file: File, settings: AnalysisSettings): Promi
       throw new Error(
         error instanceof Error 
           ? `Analysis failed: ${error.message}`
-          : 'Failed to analyze the drawing. Please try again with a clearer image.'
+          : 'Failed to analyze the drawing. Please try again.'
       );
     }
   } catch (error) {

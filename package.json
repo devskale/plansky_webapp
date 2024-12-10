@@ -10,16 +10,18 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@google/generative-ai": "^0.2.1",
+    "clsx": "^2.1.0",
     "lucide-react": "^0.344.0",
+    "pdf-lib": "^1.17.1",
+    "pdfjs-dist": "^4.9.155",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
-    "react-dropzone": "^14.2.3",
-    "pdf-lib": "^1.17.1",
-    "clsx": "^2.1.0",
-    "@google/generative-ai": "^0.2.1"
+    "react-dropzone": "^14.2.3"
   },
   "devDependencies": {
     "@eslint/js": "^9.9.1",
+    "@types/pdfjs-dist": "^2.10.378",
     "@types/react": "^18.3.5",
     "@types/react-dom": "^18.3.0",
     "@vitejs/plugin-react": "^4.3.1",
