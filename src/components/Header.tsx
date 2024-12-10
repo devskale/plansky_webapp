@@ -8,7 +8,7 @@ export function Header() {
         <div className="flex justify-between items-center">
           <div className="flex items-center space-x-3">
               <img
-                src="/src/assets/images/shark.png"
+                src="/images/shark.png"
                 alt="logo"
                 className="h-14 w-12"
               />

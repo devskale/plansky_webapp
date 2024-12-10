@@ -3,7 +3,7 @@ import { PromptConfig } from '../types';
 export const prompts: PromptConfig[] = [
   {
     id: 'standard',
-    name: 'Standardanalyse',
+    name: 'Standard',
     description: 'Grundlegende Raumanalyse mit Maßangaben v0.1',
     prompt: `Analysiere diesen 2D Raumplan und extrahiere die folgenden Informationen:
 
@@ -51,7 +51,7 @@ Formatiere die Antwort als strukturiertes JSON-Objekt mit folgender Struktur:
   },
   {
     id: 'detailed',
-    name: 'Detailed Analysis',
+    name: 'Detailed',
     description: 'Comprehensive analysis including materials and connections',
     prompt: `Perform a detailed analysis of this architectural drawing and extract:
 1. Project Information:
@@ -97,7 +97,7 @@ Format as JSON:
   },
   {
     id: 'simple',
-    name: 'Simple List',
+    name: 'Simple',
     description: 'Basic room list with sizes',
     prompt: `Create a simple room list from this architectural drawing:
 1. Extract:

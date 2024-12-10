@@ -8,9 +8,10 @@ export function Footer() {
           <p className="text-gray-600 text-sm">
             Partner: <span className="font-semibold">
               <img
-                src="/src/assets/images/sharkbau-end-plain-svg.png"
+                src="/images/sharkbau-end-plain-svg.png"
                 alt="sharkbau Logo"
                 className="h-6 w-auto inline filter grayscale contrast-[1]"
+                //className="h-6 w-auto inline bg-gray-800 filter invert "
               />
             </span>
           </p>
