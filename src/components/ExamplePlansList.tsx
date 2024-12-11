@@ -20,12 +20,19 @@ export function ExamplePlansList({ onFileUpload }: ExamplePlansListProps) {
 
   useEffect(() => {
     fetch('/api/example-plans')
-      .then(res => res.json())
+      .then(async res => {
+        if (!res.ok) {
+          const text = await res.text();
+          throw new Error(`HTTP error! status: ${res.status}, body: ${text}`);
+        }
+        return res.json();
+      })
       .then(data => {
         setFiles(data);
         setLoading(false);
       })
       .catch(err => {
+        console.error('Fetch error:', err);
         setError(err.message);
         setLoading(false);
       });
