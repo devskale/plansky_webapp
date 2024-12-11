@@ -63,7 +63,6 @@ export function ExamplePlansList({ onFileUpload }: ExamplePlansListProps) {
 
   return (
     <div>
-      <h3>Example Plans:</h3>
       <div className="grid grid-cols-4 gap-4">
         {files.map(file => (
           <div 

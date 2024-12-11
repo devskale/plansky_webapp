@@ -111,9 +111,9 @@ export function App() {
           )}
 
 <div className="bg-white rounded-lg shadow p-6">
-            <h2 className="text-lg font-semibold mb-4">Example Plans</h2>
+            <h2 className="text-lg font-semibold mb-4">Beispiel Pläne</h2>
             <p className="text-sm text-gray-600 mb-4">
-              Click on any example plan below to analyze it instantly.
+              Wählen Sie einen der folgenden Beispielpläne aus, um die Analyse zu starten.
             </p>
             <ExamplePlansList onFileUpload={handleFileUpload} />
           </div>
