@@ -1,4 +1,4 @@
-// App.tsx
+// src/App.tsx
 import React, { useState } from 'react';
 import { FileUpload } from './components/FileUpload';
 import { ProjectReport } from './components/ProjectReport';
@@ -9,6 +9,7 @@ import { PromptSelector } from './components/PromptSelector';
 import { Project, AnalysisSettings } from './types';
 import { processFile } from './services/fileProcessor';
 import { extractImageFromPDF } from './utils/file';
+import { ExamplePlansList } from './components/ExamplePlansList';
 
 export function App() {
   const [project, setProject] = useState<Project | null>(null);
@@ -80,6 +81,7 @@ export function App() {
             <h2 className="text-lg font-semibold mb-4">Upload Plans</h2>
             <FileUpload onFileUpload={handleFileUpload} />
             
+
             {previewUrl && (
               <div className="mt-6">
                 <h3 className="text-md font-medium mb-2">Preview</h3>
@@ -94,7 +96,7 @@ export function App() {
                     disabled={isProcessing}
                     className="mt-4 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 disabled:bg-gray-400 disabled:cursor-not-allowed"
                   >
-                    {isProcessing ? 'In Bearbeitung...' : 'Plananalyse Starten'}
+                    {isProcessing ? 'Processing...' : 'Start Plan Analysis'}
                   </button>
                 </div>
               </div>
@@ -103,12 +105,23 @@ export function App() {
             <ProcessingStatus isProcessing={isProcessing} error={error} />
           </div>
 
+
           {project && (
             <ProjectReport project={project} />
           )}
+
+<div className="bg-white rounded-lg shadow p-6">
+            <h2 className="text-lg font-semibold mb-4">Example Plans</h2>
+            <p className="text-sm text-gray-600 mb-4">
+              Click on any example plan below to analyze it instantly.
+            </p>
+            <ExamplePlansList onFileUpload={handleFileUpload} />
+          </div>
         </div>
       </main>
       
+
+
       <Footer />
     </div>
   );
