@@ -10,7 +10,7 @@ import { PromptSelector } from "./components/PromptSelector";
 import { Project, AnalysisSettings } from "./types";
 import { processFile } from "./services/fileProcessor";
 import { extractImageFromPDF } from "./utils/file";
-import ExamplePlans from "./components/ExamplePlansList";
+import ExamplePlansList from "./components/ExamplePlansList";
 import GeminiTest from "./pages/GeminiTest";
 
 export function App() {
@@ -141,7 +141,7 @@ export function App() {
                       Wählen Sie einen der folgenden Beispielpläne aus, um die
                       Analyse zu starten.
                     </p>
-                    {/* <ExamplePlans onFileUpload={handleFileUpload} /> */}
+                    <ExamplePlansList onFileUpload={handleFileUpload} />
                   </div>
                 </div>
               </main>

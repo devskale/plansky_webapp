@@ -1,5 +1,5 @@
 // src/components/ExamplePlansList.tsx
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 
 interface PlanFile {
   name: string;
@@ -13,55 +13,47 @@ interface ExamplePlansListProps {
 }
 
 export function ExamplePlansList({ onFileUpload }: ExamplePlansListProps) {
-  const [files, setFiles] = useState<PlanFile[]>([]);
-  const [error, setError] = useState<string | null>(null);
-  const [loading, setLoading] = useState(true);
   const [selectedName, setSelectedName] = useState<string | null>(null);
 
-  useEffect(() => {
-    fetch("/api/example-plans")
-      .then(async (res) => {
-        if (!res.ok) {
-          const text = await res.text();
-          throw new Error(`HTTP error! status: ${res.status}, body: ${text}`);
-        }
-        return res.json();
-      })
-      .then((data) => {
-        setFiles(data);
-        setLoading(false);
-      })
-      .catch((err) => {
-        console.error("Fetch error:", err);
-        setError(err.message);
-        setLoading(false);
-      });
-  }, []);
+  const files: PlanFile[] = [
+    {
+      name: "example1.png",
+      preview: "https://i.imgur.com/8TDNVdt.png",
+      type: "image/png",
+    },
+    {
+      name: "example2.png",
+      preview: "https://i.imgur.com/z1d2BRV.png", //this url does not need to be proxied
+      type: "image/png",
+    },
+    {
+      name: "example3.png",
+      preview: "https://i.imgur.com/te1PhJj.png",
+      type: "image/png",
+    },
+    {
+      name: "example4.png",
+      preview: "https://i.imgur.com/SjYshkL.png",
+      type: "image/png",
+    },
+  ];
 
-  const handlePlanClick = async (fileName: string) => {
+  const handlePlanClick = async (file: PlanFile) => {
     try {
-      setSelectedName(fileName);
-      // Fixed path: removed '/public' prefix
-      const response = await fetch(`/example-plans/${fileName}`);
+      setSelectedName(file.name);
+      const response = await fetch(file.preview);
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
       const blob = await response.blob();
-      const file = new File([blob], fileName, { type: blob.type });
-      onFileUpload([file]);
+      const fileToUpload = new File([blob], file.name, { type: file.type });
+      onFileUpload([fileToUpload]);
     } catch (err) {
       console.error("Error loading example plan:", err);
-      setError(
-        err instanceof Error ? err.message : "Failed to load example plan"
-      );
     } finally {
       setSelectedName(null);
     }
   };
-
-  if (loading) return <div>Loading example plans...</div>;
-  if (error) return <div>Error loading example plans: {error}</div>;
-  if (files.length === 0) return <div>No example plans found</div>;
 
   return (
     <div>
@@ -70,7 +62,7 @@ export function ExamplePlansList({ onFileUpload }: ExamplePlansListProps) {
           <div
             key={file.name}
             className="text-center cursor-pointer transition-transform hover:scale-105"
-            onClick={() => handlePlanClick(file.name)}>
+            onClick={() => handlePlanClick(file)}>
             {file.preview ? (
               <div className="relative">
                 <img
