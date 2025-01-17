@@ -1,5 +1,6 @@
 // src/App.tsx
 import React, { useState } from 'react';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'; // Correct import
 import { FileUpload } from './components/FileUpload';
 import { ProjectReport } from './components/ProjectReport';
 import { ProcessingStatus } from './components/ProcessingStatus';
@@ -9,7 +10,8 @@ import { PromptSelector } from './components/PromptSelector';
 import { Project, AnalysisSettings } from './types';
 import { processFile } from './services/fileProcessor';
 import { extractImageFromPDF } from './utils/file';
-import { ExamplePlansList } from './components/ExamplePlansList';
+import ExamplePlans from './components/ExamplePlansList';
+import GeminiTest from './pages/GeminiTest';
 
 export function App() {
   const [project, setProject] = useState<Project | null>(null);
@@ -68,61 +70,62 @@ export function App() {
     };
   }, [previewUrl]);
 
-  return (
-    <div className="min-h-screen bg-gray-100">
-      <Header />
+    return (
+        <Router> {/* Wrap the app with Router */}
+            <div className="min-h-screen bg-gray-100">
+                <Header />
+                <Routes> {/* Use Routes instead of Switch */}
+                  <Route path="/gemini" element={<GeminiTest />} /> {/* Render GeminiTest component directly as an element */}
+                  <Route path="/" element={
+                      <main className="max-w-7xl mx-auto px-4 py-8 sm:px-6 lg:px-8">
+                        <div className="space-y-8">
+                            <div className="bg-white rounded-lg shadow p-6">
+                                <h2 className="text-lg font-semibold mb-4">Analysis Settings</h2>
+                                <PromptSelector settings={settings} onSettingsChange={setSettings} />
 
-      <main className="max-w-7xl mx-auto px-4 py-8 sm:px-6 lg:px-8">
-        <div className="space-y-8">
-          <div className="bg-white rounded-lg shadow p-6">
-            <h2 className="text-lg font-semibold mb-4">Analysis Settings</h2>
-            <PromptSelector settings={settings} onSettingsChange={setSettings} />
-            
-            <h2 className="text-lg font-semibold mb-4">Upload Plans</h2>
-            <FileUpload onFileUpload={handleFileUpload} />
-            
+                                <h2 className="text-lg font-semibold mb-4">Upload Plans</h2>
+                                <FileUpload onFileUpload={handleFileUpload} />
 
-            {previewUrl && (
-              <div className="mt-6">
-                <h3 className="text-md font-medium mb-2">Preview</h3>
-                <div className="relative">
-                  <img 
-                    src={previewUrl} 
-                    alt="Plan preview" 
-                    className="max-h-96 max-w-full object-contain rounded border border-gray-200"
-                  />
-                  <button
-                    onClick={handleProcess}
-                    disabled={isProcessing}
-                    className="mt-4 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 disabled:bg-gray-400 disabled:cursor-not-allowed"
-                  >
-                    {isProcessing ? 'Processing...' : 'Start Plan Analysis'}
-                  </button>
-                </div>
-              </div>
-            )}
-            
-            <ProcessingStatus isProcessing={isProcessing} error={error} />
-          </div>
+                                {previewUrl && (
+                                    <div className="mt-6">
+                                        <h3 className="text-md font-medium mb-2">Preview</h3>
+                                        <div className="relative">
+                                            <img
+                                                src={previewUrl}
+                                                alt="Plan preview"
+                                                className="max-h-96 max-w-full object-contain rounded border border-gray-200"
+                                            />
+                                            <button
+                                                onClick={handleProcess}
+                                                disabled={isProcessing}
+                                                className="mt-4 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 disabled:bg-gray-400 disabled:cursor-not-allowed"
+                                            >
+                                                {isProcessing ? 'Processing...' : 'Start Plan Analysis'}
+                                            </button>
+                                        </div>
+                                    </div>
+                                )}
 
+                                <ProcessingStatus isProcessing={isProcessing} error={error} />
+                            </div>
 
-          {project && (
-            <ProjectReport project={project} />
-          )}
+                            {project && (
+                                <ProjectReport project={project} />
+                            )}
 
-<div className="bg-white rounded-lg shadow p-6">
-            <h2 className="text-lg font-semibold mb-4">Beispiel Pläne</h2>
-            <p className="text-sm text-gray-600 mb-4">
-              Wählen Sie einen der folgenden Beispielpläne aus, um die Analyse zu starten.
-            </p>
-            <ExamplePlansList onFileUpload={handleFileUpload} />
-          </div>
-        </div>
-      </main>
-      
-
-
-      <Footer />
-    </div>
-  );
+                            <div className="bg-white rounded-lg shadow p-6">
+                                <h2 className="text-lg font-semibold mb-4">Beispiel Pläne</h2>
+                                <p className="text-sm text-gray-600 mb-4">
+                                    Wählen Sie einen der folgenden Beispielpläne aus, um die Analyse zu starten.
+                                </p>
+                                <ExamplePlans onFileUpload={handleFileUpload} />
+                            </div>
+                        </div>
+                    </main>
+                    } />
+                </Routes>
+                <Footer />
+            </div>
+        </Router>
+    );
 }

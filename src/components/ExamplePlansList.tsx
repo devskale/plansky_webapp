@@ -1,5 +1,5 @@
 // src/components/ExamplePlansList.tsx
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState } from "react";
 
 interface PlanFile {
   name: string;
@@ -19,20 +19,20 @@ export function ExamplePlansList({ onFileUpload }: ExamplePlansListProps) {
   const [selectedName, setSelectedName] = useState<string | null>(null);
 
   useEffect(() => {
-    fetch('/api/example-plans')
-      .then(async res => {
+    fetch("/api/example-plans")
+      .then(async (res) => {
         if (!res.ok) {
           const text = await res.text();
           throw new Error(`HTTP error! status: ${res.status}, body: ${text}`);
         }
         return res.json();
       })
-      .then(data => {
+      .then((data) => {
         setFiles(data);
         setLoading(false);
       })
-      .catch(err => {
-        console.error('Fetch error:', err);
+      .catch((err) => {
+        console.error("Fetch error:", err);
         setError(err.message);
         setLoading(false);
       });
@@ -50,8 +50,10 @@ export function ExamplePlansList({ onFileUpload }: ExamplePlansListProps) {
       const file = new File([blob], fileName, { type: blob.type });
       onFileUpload([file]);
     } catch (err) {
-      console.error('Error loading example plan:', err);
-      setError(err instanceof Error ? err.message : 'Failed to load example plan');
+      console.error("Error loading example plan:", err);
+      setError(
+        err instanceof Error ? err.message : "Failed to load example plan"
+      );
     } finally {
       setSelectedName(null);
     }
@@ -64,19 +66,18 @@ export function ExamplePlansList({ onFileUpload }: ExamplePlansListProps) {
   return (
     <div>
       <div className="grid grid-cols-4 gap-4">
-        {files.map(file => (
-          <div 
-            key={file.name} 
+        {files.map((file) => (
+          <div
+            key={file.name}
             className="text-center cursor-pointer transition-transform hover:scale-105"
-            onClick={() => handlePlanClick(file.name)}
-          >
+            onClick={() => handlePlanClick(file.name)}>
             {file.preview ? (
               <div className="relative">
-                <img 
-                  src={file.preview} 
+                <img
+                  src={file.preview}
                   alt={file.name}
                   className={`w-16 h-16 mx-auto object-contain bg-white border border-gray-200 rounded 
-                    ${selectedName === file.name ? 'opacity-50' : ''}`}
+                    ${selectedName === file.name ? "opacity-50" : ""}`}
                 />
                 {selectedName === file.name && (
                   <div className="absolute inset-0 flex items-center justify-center">
@@ -96,3 +97,5 @@ export function ExamplePlansList({ onFileUpload }: ExamplePlansListProps) {
     </div>
   );
 }
+
+export default ExamplePlansList;

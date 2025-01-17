@@ -1,6 +1,7 @@
 import { fileToBase64 } from '../utils/file';
 import { transformAnalysisToProject } from '../utils/transform';
-import { analyzeDrawing } from './gemini';
+//import { analyzeDrawing } from './gemini';
+import { analyzeDrawingFlash } from './gemini_flash';
 import { Project, AnalysisSettings } from '../types';
 
 
@@ -40,7 +41,8 @@ export async function processFile(file: File, settings: AnalysisSettings): Promi
     }
 
     try {
-      const analysisResult = await analyzeDrawing(fileData, file.type, settings);
+//      const analysisResult = await analyzeDrawing(fileData, file.type, settings);
+      const analysisResult = await analyzeDrawingFlash(fileData, file.type, settings);
       if (!analysisResult) {
         throw new Error('Analysis returned no results');
       }
