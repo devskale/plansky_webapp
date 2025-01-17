@@ -1,6 +1,6 @@
 // src/App.tsx
-import React, { useState } from "react";
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom"; // Correct import
+import React, { useState, useCallback } from "react";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { FileUpload } from "./components/FileUpload";
 import { ProjectReport } from "./components/ProjectReport";
 import { ProcessingStatus } from "./components/ProcessingStatus";
@@ -22,8 +22,33 @@ export function App() {
   });
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+  const [isDraggingOver, setIsDraggingOver] = useState(false);
 
-  const handleFileUpload = async (files: File[]) => {
+  const handleClearPreview = () => {
+    if (previewUrl && !previewUrl.startsWith("data:")) {
+      URL.revokeObjectURL(previewUrl);
+    }
+    setPreviewUrl(null);
+    setSelectedFile(null);
+  };
+
+  const handleDragOver = (event: React.DragEvent) => {
+    event.preventDefault();
+    setIsDraggingOver(true);
+  };
+
+  const handleDragLeave = () => {
+    setIsDraggingOver(false);
+  };
+
+  const handleDrop = async (event: React.DragEvent) => {
+    event.preventDefault();
+    setIsDraggingOver(false);
+    const files = Array.from(event.dataTransfer.files);
+    handleFileUpload(files);
+  };
+
+  const handleFileUpload = useCallback(async (files: File[]) => {
     if (files.length === 0) return;
 
     const file = files[0];
@@ -45,7 +70,7 @@ export function App() {
       setSelectedFile(null);
       setPreviewUrl(null);
     }
-  };
+  }, []);
 
   const handleProcess = async () => {
     if (!selectedFile) return;
@@ -78,15 +103,10 @@ export function App() {
 
   return (
     <Router>
-      {" "}
-      {/* Wrap the app with Router */}
       <div className="min-h-screen bg-gray-100">
         <Header />
         <Routes>
-          {" "}
-          {/* Use Routes instead of Switch */}
-          <Route path="/gemini" element={<GeminiTest />} />{" "}
-          {/* Render GeminiTest component directly as an element */}
+          <Route path="/gemini" element={<GeminiTest />} />
           <Route
             path="/"
             element={
@@ -100,14 +120,23 @@ export function App() {
                       settings={settings}
                       onSettingsChange={setSettings}
                     />
-
                     <h2 className="text-lg font-semibold mb-4">Upload Plans</h2>
-                    <FileUpload onFileUpload={handleFileUpload} />
-
-                    {previewUrl && (
-                      <div className="mt-6">
-                        <h3 className="text-md font-medium mb-2">Preview</h3>
+                    <div
+                      className={`border-2 border-dashed rounded-md p-6 flex justify-center items-center relative ${
+                        isDraggingOver
+                          ? "border-blue-500 bg-gray-50"
+                          : "border-gray-300"
+                      }`}
+                      onDragOver={handleDragOver}
+                      onDragLeave={handleDragLeave}
+                      onDrop={handleDrop}>
+                      {previewUrl ? (
                         <div className="relative">
+                          <button
+                            onClick={handleClearPreview}
+                            className="absolute top-2 right-2 bg-gray-200 rounded-full p-1 hover:bg-gray-300">
+                            X
+                          </button>
                           <img
                             src={previewUrl}
                             alt="Plan preview"
@@ -122,15 +151,16 @@ export function App() {
                               : "Start Plan Analysis"}
                           </button>
                         </div>
-                      </div>
-                    )}
+                      ) : (
+                        <FileUpload onFileUpload={handleFileUpload} />
+                      )}
+                    </div>
 
                     <ProcessingStatus
                       isProcessing={isProcessing}
                       error={error}
                     />
                   </div>
-
                   {project && <ProjectReport project={project} />}
 
                   <div className="bg-white rounded-lg shadow p-6">
