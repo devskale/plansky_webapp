@@ -1,8 +1,13 @@
 {
-  "files": [],
-  "references": [
-    { "path": "./tsconfig.app.json" },
-    { "path": "./tsconfig.node.json" }
-  ]
+  "compilerOptions": {
+    "target": "es2020",
+    "module": "esnext",
+    "moduleResolution": "node",
+    "outDir": "dist",
+    "esModuleInterop": true,
+    "sourceMap": true,
+    "strict": true,
+    "allowSyntheticDefaultImports": true
+  },
+  "include": ["api/**/*"]
 }
-

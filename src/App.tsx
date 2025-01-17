@@ -141,7 +141,7 @@ export function App() {
                       Wählen Sie einen der folgenden Beispielpläne aus, um die
                       Analyse zu starten.
                     </p>
-                    <ExamplePlans onFileUpload={handleFileUpload} />
+                    {/* <ExamplePlans onFileUpload={handleFileUpload} /> */}
                   </div>
                 </div>
               </main>
