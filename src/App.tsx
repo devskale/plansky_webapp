@@ -134,8 +134,8 @@ export function App() {
                         <div className="relative">
                           <button
                             onClick={handleClearPreview}
-                            className="absolute top-2 right-2 bg-gray-200 rounded-full p-1 hover:bg-gray-300">
-                            X
+                            className="absolute top-2 right-2 h-8 w-8 flex items-center justify-center bg-gray-200 rounded-full p-1 hover:bg-gray-300">
+                            ✕
                           </button>
                           <img
                             src={previewUrl}
